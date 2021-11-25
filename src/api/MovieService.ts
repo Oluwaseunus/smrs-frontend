@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { TMDBMediaType } from '../enums';
 
 class MovieService {
@@ -24,8 +24,24 @@ class MovieService {
   }
 
   static async getMovie(id: string) {
-    const { data } = await this.instance.get<TMDBMovie>(
-      `/movie/${id}?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US`
+    try {
+      const { data } = await this.instance.get<TMDBMovie>(
+        `/movie/${id}?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US`
+      );
+
+      return data;
+    } catch (err: any) {
+      if ((err as AxiosError).response?.data.status_code === 34) {
+        await this.getSeries(id);
+      }
+
+      throw err;
+    }
+  }
+
+  static async getSeries(id: string) {
+    const { data } = await this.instance.get<TMDBSeries>(
+      `/tv/${id}?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US`
     );
 
     return data;

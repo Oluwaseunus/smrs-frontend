@@ -15,6 +15,8 @@ export default class UserActionsCreator {
 
   static unauthenticate() {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
     this.dispatch({
       type: types.UNAUTHENTICATED,
     });

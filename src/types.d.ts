@@ -2,7 +2,10 @@
 
 interface User {
   _id: string;
+  email: string;
   username: string;
+  lastName: string;
+  firstName: string;
 }
 
 interface Movie {
@@ -170,4 +173,10 @@ interface TMDBMultiSearchResults {
     id: number;
     media_type: TMDBMediaType;
   }[];
+}
+
+interface APIResponse<T extends any> {
+  data?: T;
+  message: string;
+  status: 'successful' | 'error';
 }

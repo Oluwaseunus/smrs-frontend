@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+import { Link as RLink, RouteComponentProps } from 'react-router-dom';
 import {
   Box,
   Flex,
@@ -11,8 +13,6 @@ import {
   Heading,
   Spinner,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
-import { Link as RLink, RouteComponentProps } from 'react-router-dom';
 
 import MovieService from '../api/MovieService';
 
@@ -20,7 +20,7 @@ interface SingleMovieProps extends RouteComponentProps<{ movieId: string }> {}
 
 function SingleMovie({ match }: SingleMovieProps) {
   const [loading, setLoading] = useState(true);
-  const [isWatched, setIsWatched] = useState(true);
+  const [isWatched, setIsWatched] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [movie, setMovie] = useState<TMDBMovie | null>(null);
 
@@ -83,13 +83,17 @@ function SingleMovie({ match }: SingleMovieProps) {
                 </Heading>
 
                 <HStack>
-                  <Text fontSize='md' textAlign='center'>
-                    Tagline: {movie.tagline}
-                  </Text>
+                  {movie.tagline && (
+                    <Text fontSize='md' textAlign='center'>
+                      Tagline: {movie.tagline}
+                    </Text>
+                  )}
 
-                  <Text fontSize='md' textAlign='center'>
-                    Rating: {movie.vote_average}
-                  </Text>
+                  {movie.vote_average && (
+                    <Text fontSize='md' textAlign='center'>
+                      Rating: {movie.vote_average}
+                    </Text>
+                  )}
                 </HStack>
 
                 <Text fontSize='xl'>{movie.overview}</Text>

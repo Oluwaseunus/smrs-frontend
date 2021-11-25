@@ -23,7 +23,7 @@ export default function Home() {
   const history = useHistory();
 
   const [isSearching, setIsSearching] = useState(false);
-  const { username = '', _id = '1' } = useSelector(
+  const { firstName, _id = '1' } = useSelector(
     (state: RootState) => state.user
   );
   const [movies, setMovies] = useState<TMDBMovie[]>([]);
@@ -62,7 +62,7 @@ export default function Home() {
   return (
     <Box width='85vw' margin='auto'>
       <Heading fontSize='lg' size='4xl' mt={10}>
-        Hello {username || 'username'} 👋
+        Hello {firstName} 👋
       </Heading>
 
       <form onSubmit={handleSubmit}>
@@ -76,6 +76,7 @@ export default function Home() {
             <Input
               mr={5}
               value={query}
+              disabled={isSearching}
               placeholder='F.R.I.E.N.D.S'
               onChange={(e) => setQuery(e.target.value)}
             />

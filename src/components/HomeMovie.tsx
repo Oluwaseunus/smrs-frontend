@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import MovieService from '../api/MovieService';
 import { Box, Image, Text, Button, Center } from '@chakra-ui/react';
+
+import MovieService from '../api/MovieService';
+import UserMovieService from '../api/UserMovieService';
 
 interface HomeMovieProps {
   movie: TMDBMovie;
@@ -15,7 +17,7 @@ function HomeMovie({ movie }: HomeMovieProps) {
     setIsLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await UserMovieService.addMovieToWatchedList(movie.title);
       setIsWatched(!isWatched);
     } catch (err) {
     } finally {
