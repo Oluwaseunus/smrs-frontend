@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link as RLink, RouteComponentProps } from 'react-router-dom';
 import {
   Box,
@@ -12,43 +13,86 @@ import {
   VStack,
   Heading,
   Spinner,
+  useToast,
 } from '@chakra-ui/react';
 
 import MovieService from '../api/MovieService';
+import { RootState } from '../store';
+import WatchlistActionsCreator from '../store/actions/watchlist';
 
 interface SingleMovieProps extends RouteComponentProps<{ movieId: string }> {}
 
 function SingleMovie({ match }: SingleMovieProps) {
+  const toast = useToast();
   const [loading, setLoading] = useState(true);
-  const [isWatched, setIsWatched] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [movie, setMovie] = useState<TMDBMovie | null>(null);
-
-  async function addToWatchedList() {
-    setIsUpdating(true);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setIsWatched(!isWatched);
-    } catch (err) {
-    } finally {
-      setIsUpdating(false);
-    }
-  }
+  const watchlist = useSelector((state: RootState) => state.watchlist);
 
   useEffect(() => {
     async function fetchMovie() {
       try {
         const movie = await MovieService.getMovie(match.params.movieId);
         setMovie(movie);
-      } catch (err) {
+      } catch (err: any) {
+        toast({
+          position: 'top',
+          status: 'error',
+          isClosable: true,
+          variant: 'left-accent',
+          title:
+            err.response?.data?.message ||
+            "Couldn't fetch movie, please try again.",
+        });
       } finally {
         setLoading(false);
       }
     }
 
     fetchMovie();
-  }, [match.params.movieId]);
+  }, [toast, match.params.movieId]);
+
+  const addToWatchedList = useCallback(async () => {
+    setIsUpdating(true);
+
+    try {
+      await WatchlistActionsCreator.addToWatchList(movie?.title || '');
+    } catch (err: any) {
+      toast({
+        position: 'top',
+        status: 'error',
+        isClosable: true,
+        variant: 'left-accent',
+        title:
+          err.response?.data?.message ||
+          "Couldn't add movie to watchlist, please try again.",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  }, [movie, toast]);
+
+  const removeFromWatchedList = useCallback(async () => {
+    setIsUpdating(true);
+
+    try {
+      await WatchlistActionsCreator.removeFromWatchList(movie?.title || '');
+    } catch (err: any) {
+      toast({
+        position: 'top',
+        status: 'error',
+        isClosable: true,
+        variant: 'left-accent',
+        title:
+          err.response?.data?.message ||
+          "Couldn't fetch movie, please try again.",
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  }, [movie, toast]);
+
+  const isWatched = watchlist.includes(movie?.title || '');
 
   return (
     <>
@@ -58,7 +102,7 @@ function SingleMovie({ match }: SingleMovieProps) {
         </Link>
       </Box>
 
-      <Center width='50%' maxWidth='80%' margin='auto' mt={10}>
+      <Center width='50%' maxWidth='80%' margin='auto' my={10}>
         {(() => {
           if (loading) {
             return <Spinner size='xl' />;
@@ -98,16 +142,27 @@ function SingleMovie({ match }: SingleMovieProps) {
 
                 <Text fontSize='xl'>{movie.overview}</Text>
 
-                <Button
-                  isLoading={isUpdating}
-                  maxWidth='fit-content'
-                  onClick={addToWatchedList}
-                  colorScheme={isWatched ? 'red' : 'teal'}
-                >
-                  {isWatched
-                    ? 'Remove From Watched List'
-                    : 'Add To Watched List'}
-                </Button>
+                {isWatched ? (
+                  <Button
+                    colorScheme='red'
+                    isLoading={isUpdating}
+                    maxWidth='fit-content'
+                    onClick={removeFromWatchedList}
+                  >
+                    Remove From Watched List
+                  </Button>
+                ) : (
+                  <Button
+                    isLoading={isUpdating}
+                    maxWidth='fit-content'
+                    onClick={addToWatchedList}
+                    colorScheme={isWatched ? 'red' : 'teal'}
+                  >
+                    {isWatched
+                      ? 'Remove From Watched List'
+                      : 'Add To Watched List'}
+                  </Button>
+                )}
               </VStack>
             </Flex>
           );

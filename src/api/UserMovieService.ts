@@ -15,8 +15,20 @@ class UserMovieService {
   }
 
   async addMovieToWatchedList(title: string) {
-    const response = await this.instance.post('/api/user/movie', { title });
-    console.log({ response });
+    const response = await this.instance.post('/user/movie', { title });
+    return response.data;
+  }
+
+  async fetchWatchlist() {
+    const response = await this.instance.get<APIResponse<{ title: string }[]>>(
+      '/user/movie'
+    );
+    return response.data.data?.map((item) => item.title) || [];
+  }
+
+  async removeMovieFromWatchedList(title: string) {
+    const response = await this.instance.delete(`/user/movie?title=${title}`);
+    return response.data;
   }
 
   getHeaders() {

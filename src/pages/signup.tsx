@@ -94,6 +94,7 @@ function Signup() {
             type='password'
             name='password'
             value={password}
+            placeholder='********'
             onChange={(e) => setPassword(e.target.value)}
           />
         </FormControl>

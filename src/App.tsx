@@ -1,19 +1,13 @@
 import { Provider } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { Center, Spinner, useToast } from '@chakra-ui/react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import Index from './pages';
+import Router from './Router';
 import { store } from './store';
-import Home from './pages/home';
-import Login from './pages/login';
-import Signup from './pages/signup';
-import Navbar from './components/Navbar';
 import UserService from './api/UserService';
 import MovieService from './api/MovieService';
-import SingleMovie from './pages/singleMovie';
 import UserActionsCreator from './store/actions/user';
-import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const toast = useToast();
@@ -51,15 +45,7 @@ function App() {
   ) : (
     <Provider store={store}>
       <BrowserRouter>
-        <Navbar />
-
-        <Switch>
-          <Route path='/login' component={Login} />
-          <Route path='/signup' component={Signup} />
-          <ProtectedRoute path='/home' component={Home} />
-          <ProtectedRoute exact path='/' component={Index} />
-          <ProtectedRoute path='/item/:movieId' component={SingleMovie} />
-        </Switch>
+        <Router />
       </BrowserRouter>
     </Provider>
   );

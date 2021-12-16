@@ -1,5 +1,6 @@
-import { useHistory } from 'react-router';
+import { useSelector } from 'react-redux';
 import { useState, FormEvent } from 'react';
+import { useHistory, Redirect } from 'react-router-dom';
 import {
   Text,
   Input,
@@ -9,6 +10,7 @@ import {
   FormControl,
 } from '@chakra-ui/react';
 
+import { RootState } from '../store';
 import UserService from '../api/UserService';
 import UserActionsCreator from '../store/actions/user';
 
@@ -18,6 +20,11 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state: RootState) => state.user);
+
+  if (user._id) {
+    return <Redirect to='/home' />;
+  }
 
   async function submitForm(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
