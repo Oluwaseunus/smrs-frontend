@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useState, FormEvent } from 'react';
-import { useHistory, Redirect } from 'react-router-dom';
+import { useHistory, Redirect, Link as RouteLink } from 'react-router-dom';
 import {
   Text,
   Input,
@@ -8,6 +8,7 @@ import {
   Center,
   useToast,
   FormControl,
+  Link,
 } from '@chakra-ui/react';
 
 import { RootState } from '../store';
@@ -50,7 +51,7 @@ export default function Login() {
   }
 
   return (
-    <Center h='100vh'>
+    <Center h='100vh' flexDir='column'>
       <form onSubmit={submitForm}>
         <Center>
           <Text fontSize='xl'>Enter your email and password.</Text>
@@ -87,6 +88,10 @@ export default function Login() {
           </Button>
         </Center>
       </form>
+
+      <Link as={RouteLink} to='/signup'>
+        Create an account
+      </Link>
     </Center>
   );
 }

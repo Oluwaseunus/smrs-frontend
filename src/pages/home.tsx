@@ -17,6 +17,7 @@ import {
 import { RootState } from '../store';
 import MovieService from '../api/MovieService';
 import HomeMovie from '../components/HomeMovie';
+import UserMovieService from '../api/UserMovieService';
 
 export default function Home() {
   const toast = useToast();
@@ -30,8 +31,30 @@ export default function Home() {
 
   React.useEffect(() => {
     async function fetchData() {
-      const movies = await MovieService.getUserMovies();
-      setMovies(movies);
+      try {
+        const recommendations = await UserMovieService.fetchRecommendations();
+
+        const movieIds = await Promise.all(
+          (recommendations || []).map((r) =>
+            MovieService.searchMovie(r).then((s) => s.id)
+          )
+        );
+
+        const movies = await Promise.all(
+          movieIds.map((id) => MovieService.getMovie('' + id))
+        );
+
+        setMovies(movies);
+      } catch (err) {
+        toast({
+          position: 'top',
+          status: 'error',
+          isClosable: true,
+          variant: 'left-accent',
+          title:
+            'There was a problem fetching your recommendations, please try again.',
+        });
+      }
     }
 
     fetchData();

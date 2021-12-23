@@ -1,6 +1,7 @@
-import { useHistory } from 'react-router';
+import { Link as RouteLink, useHistory } from 'react-router-dom';
 import { FormEvent, useState } from 'react';
 import {
+  Link,
   Text,
   Input,
   Button,
@@ -48,8 +49,8 @@ function Signup() {
   }
 
   return (
-    <Center h='100vh'>
-      <form onSubmit={submitForm}>
+    <Center h='100vh' flexDir='column'>
+      <form onSubmit={submitForm} style={{ width: '270px' }}>
         <Center>
           <Text fontSize='xl'>Create your account.</Text>
         </Center>
@@ -105,6 +106,13 @@ function Signup() {
           </Button>
         </Center>
       </form>
+
+      <Text>
+        Already have an account?{' '}
+        <Link as={RouteLink} to='/login'>
+          Sign in.
+        </Link>
+      </Text>
     </Center>
   );
 }

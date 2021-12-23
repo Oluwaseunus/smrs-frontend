@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
-import { Box, Center, Grid, Heading } from '@chakra-ui/react';
+import { Box, Center, Grid, Heading, Text } from '@chakra-ui/react';
 
 import { RootState } from '../store';
 import MovieService from '../api/MovieService';
@@ -40,17 +40,28 @@ function Watchlist() {
         Hello {firstName} 👋
       </Heading>
 
-      <Heading fontSize='lg' size='3xl' my={3}>
-        Here are the movies in your watch history:
-      </Heading>
+      {movies.length ? (
+        <>
+          <Heading fontSize='lg' size='3xl' my={3}>
+            Here are the movies in your watch history:
+          </Heading>
 
-      <Center marginY={10}>
-        <Grid gap={10} templateColumns='repeat(3, 1fr)'>
-          {movies.map((movie) => (
-            <HomeMovie movie={movie} key={movie.id} />
-          ))}
-        </Grid>
-      </Center>
+          <Center marginY={10}>
+            <Grid gap={10} templateColumns='repeat(3, 1fr)'>
+              {movies.map((movie) => (
+                <HomeMovie movie={movie} key={movie.id} />
+              ))}
+            </Grid>
+          </Center>
+        </>
+      ) : (
+        <Center width='100%' height='100%'>
+          <Text>
+            There are no movies in your watch history. Add some movies to get
+            started.
+          </Text>
+        </Center>
+      )}
     </Box>
   );
 }

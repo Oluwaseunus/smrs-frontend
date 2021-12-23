@@ -5,7 +5,7 @@ class UserMovieService {
 
   constructor() {
     this.instance = axios.create({
-      baseURL: process.env.REACT_APP_BASE_URL,
+      baseURL: `${process.env.REACT_APP_BASE_URL}/user`,
     });
 
     this.instance.interceptors.request.use((config) => {
@@ -14,20 +14,28 @@ class UserMovieService {
     });
   }
 
+  async fetchRecommendations() {
+    const response = await this.instance.get<APIResponse<string[]>>(
+      '/recommendations'
+    );
+
+    return response.data.data;
+  }
+
   async addMovieToWatchedList(title: string) {
-    const response = await this.instance.post('/user/movie', { title });
+    const response = await this.instance.post('/movie', { title });
     return response.data;
   }
 
   async fetchWatchlist() {
     const response = await this.instance.get<APIResponse<{ title: string }[]>>(
-      '/user/movie'
+      '/movie'
     );
     return response.data.data?.map((item) => item.title) || [];
   }
 
   async removeMovieFromWatchedList(title: string) {
-    const response = await this.instance.delete(`/user/movie?title=${title}`);
+    const response = await this.instance.delete(`/movie?title=${title}`);
     return response.data;
   }
 
